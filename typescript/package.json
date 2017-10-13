@@ -1,0 +1,13 @@
+{
+  "name": "mal",
+  "version": "1.0.0",
+  "description": "MAL implementation in TypeScript",
+  "author": "Joshua Escamilla <joshua.escamilla@selu.edu>",
+  "devDependencies": {
+    "@types/node": "^8.0.34",
+    "@types/readline-sync": "^1.4.2",
+    "readline-sync": "^1.4.7",
+    "ts-node": "^3.3.0",
+    "typescript": "^2.5.3"
+  }
+}
