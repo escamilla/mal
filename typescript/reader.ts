@@ -66,7 +66,7 @@ function read_list(reader: Reader): MalList {
 
 function read_atom(reader: Reader): MalType {
   const token: string = reader.next();
-  if (token.match(/\d+/)) {
+  if (token.match(/^-?\d+$/)) {
     return new MalInteger(parseInt(token, 10));
   } else {
     return new MalSymbol(token);
