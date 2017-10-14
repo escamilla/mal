@@ -24,5 +24,9 @@ while (true) {
   if (line === "") {
     break;
   }
-  console.log(rep(line)); // tslint:disable-line no-console
+  try {
+    console.log(rep(line)); // tslint:disable-line no-console
+  } catch (e) {
+    console.log(e.message);
+  }
 }
