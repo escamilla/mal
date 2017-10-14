@@ -19,4 +19,10 @@ class MalList extends MalType {
   }
 }
 
-export { MalInteger, MalList, MalSymbol, MalType };
+class MalFunction extends MalType {
+  public constructor(public readonly func: (args: MalType[]) => MalType) {
+    super();
+  }
+}
+
+export { MalFunction, MalInteger, MalList, MalSymbol, MalType };
