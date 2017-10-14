@@ -8,7 +8,7 @@ class MalInteger extends MalType {
 }
 
 class MalSymbol extends MalType {
-  public constructor(public readonly value: string) {
+  public constructor(public readonly name: string) {
     super();
   }
 }

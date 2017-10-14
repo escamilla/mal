@@ -2,12 +2,11 @@ import * as readline from "readline-sync";
 import { pr_str } from "./printer";
 import { read_str } from "./reader";
 import { MalFunction, MalInteger, MalList, MalSymbol, MalType } from "./types";
+import { Env } from "./env";
 
-type Environment = Map<string, MalType>;
+const repl_env: Env = new Env();
 
-const repl_env: Environment = new Map();
-
-repl_env.set("+", new MalFunction(
+repl_env.set(new MalSymbol("+"), new MalFunction(
   (args: MalType[]) => {
     const x: MalInteger = args[0] as MalInteger;
     const y: MalInteger = args[1] as MalInteger;
@@ -15,7 +14,7 @@ repl_env.set("+", new MalFunction(
   }
 ));
 
-repl_env.set("-", new MalFunction(
+repl_env.set(new MalSymbol("-"), new MalFunction(
   (args: MalType[]) => {
     const x: MalInteger = args[0] as MalInteger;
     const y: MalInteger = args[1] as MalInteger;
@@ -23,7 +22,7 @@ repl_env.set("-", new MalFunction(
   }
 ));
 
-repl_env.set("*", new MalFunction(
+repl_env.set(new MalSymbol("*"), new MalFunction(
   (args: MalType[]) => {
     const x: MalInteger = args[0] as MalInteger;
     const y: MalInteger = args[1] as MalInteger;
@@ -31,7 +30,7 @@ repl_env.set("*", new MalFunction(
   }
 ));
 
-repl_env.set("/", new MalFunction(
+repl_env.set(new MalSymbol("/"), new MalFunction(
   (args: MalType[]) => {
     const x: MalInteger = args[0] as MalInteger;
     const y: MalInteger = args[1] as MalInteger;
@@ -43,27 +42,42 @@ function read(input: string): MalType {
   return read_str(input);
 }
 
-function eval_(input: MalType, env: Environment): MalType {
-  if (input instanceof MalList) {
-    if (input.items.length > 0) {
-      const evaluatedList: MalList = eval_ast(input, env) as MalList;
-      const fn: MalFunction = evaluatedList.items[0] as MalFunction;
-      const args: MalType[] = evaluatedList.items.slice(1);
-      return fn.func(args);
-    } else {
-      return input;
+function eval_(input: MalType, env: Env): MalType {
+  if (!(input instanceof MalList)) {
+    return eval_ast(input, env);
+  }
+
+  if (input.items.length === 0) {
+    return input;
+  }
+
+  const first: MalType = input.items[0];
+  if (first instanceof MalSymbol) {
+    if (first.name === "def!") {
+      const key: MalSymbol = input.items[1] as MalSymbol;
+      const value: MalType = eval_(input.items[2], env);
+      env.set(key, value);
+      return value;
+    } else if (first.name === "let*") {
+      const newEnv: Env = new Env(env);
+      const bindings: MalList = input.items[1] as MalList;
+      for (let i: number = 0; i < bindings.items.length; i += 2) {
+        const key: MalSymbol = bindings.items[i] as MalSymbol;
+        const value: MalType = eval_(bindings.items[i + 1], newEnv);
+        newEnv.set(key, value);
+      }
+      return eval_(input.items[2], newEnv);
     }
   }
-  return eval_ast(input, env);
+  const evaluatedList: MalList = eval_ast(input, env) as MalList;
+  const fn: MalFunction = evaluatedList.items[0] as MalFunction;
+  const args: MalType[] = evaluatedList.items.slice(1);
+  return fn.func(args);
 }
 
-function eval_ast(ast: MalType, env: Environment): MalType {
+function eval_ast(ast: MalType, env: Env): MalType {
   if (ast instanceof MalSymbol) {
-    if (env.has(ast.name)) {
-      return env.get(ast.name) as MalType;
-    } else {
-      throw new Error(`'${ast.name}' not found`);
-    }
+    return env.get(ast);
   } else if (ast instanceof MalList) {
     return new MalList(ast.items.map((item: MalType) => eval_(item, env)));
   }
@@ -86,6 +100,6 @@ while (true) {
   try {
     console.log(rep(line)); // tslint:disable-line no-console
   } catch (e) {
-    console.log(e.message);
+    console.log(`Error: ${e.message}`);
   }
 }

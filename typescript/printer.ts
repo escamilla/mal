@@ -2,7 +2,7 @@ import { MalInteger, MalList, MalSymbol, MalType } from "./types";
 
 function pr_str(input: MalType): string {
   if (input instanceof MalSymbol) {
-    return input.value;
+    return input.name;
   } else if (input instanceof MalInteger) {
     return `${input.value}`;
   } else if (input instanceof MalList) {
