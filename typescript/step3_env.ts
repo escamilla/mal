@@ -1,41 +1,41 @@
 import * as readline from "readline-sync";
+import { Env } from "./env";
 import { pr_str } from "./printer";
 import { read_str } from "./reader";
 import { MalFunction, MalInteger, MalList, MalSymbol, MalType } from "./types";
-import { Env } from "./env";
 
-const repl_env: Env = new Env();
+const replEnv: Env = new Env();
 
-repl_env.set(new MalSymbol("+"), new MalFunction(
-  (args: MalType[]) => {
+replEnv.set(new MalSymbol("+"), new MalFunction(
+  (args: MalType[]): MalInteger => {
     const x: MalInteger = args[0] as MalInteger;
     const y: MalInteger = args[1] as MalInteger;
     return new MalInteger(x.value + y.value);
-  }
+  },
 ));
 
-repl_env.set(new MalSymbol("-"), new MalFunction(
-  (args: MalType[]) => {
+replEnv.set(new MalSymbol("-"), new MalFunction(
+  (args: MalType[]): MalInteger => {
     const x: MalInteger = args[0] as MalInteger;
     const y: MalInteger = args[1] as MalInteger;
     return new MalInteger(x.value - y.value);
-  }
+  },
 ));
 
-repl_env.set(new MalSymbol("*"), new MalFunction(
-  (args: MalType[]) => {
+replEnv.set(new MalSymbol("*"), new MalFunction(
+  (args: MalType[]): MalInteger => {
     const x: MalInteger = args[0] as MalInteger;
     const y: MalInteger = args[1] as MalInteger;
     return new MalInteger(x.value * y.value);
-  }
+  },
 ));
 
-repl_env.set(new MalSymbol("/"), new MalFunction(
-  (args: MalType[]) => {
+replEnv.set(new MalSymbol("/"), new MalFunction(
+  (args: MalType[]): MalInteger => {
     const x: MalInteger = args[0] as MalInteger;
     const y: MalInteger = args[1] as MalInteger;
     return new MalInteger(Math.floor(x.value / y.value));
-  }
+  },
 ));
 
 function read(input: string): MalType {
@@ -89,7 +89,7 @@ function print(input: MalType): string {
 }
 
 function rep(input: string): string {
-  return print(eval_(read(input), repl_env));
+  return print(eval_(read(input), replEnv));
 }
 
 while (true) {

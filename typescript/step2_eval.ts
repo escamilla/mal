@@ -5,38 +5,38 @@ import { MalFunction, MalInteger, MalList, MalSymbol, MalType } from "./types";
 
 type Environment = Map<string, MalType>;
 
-const repl_env: Environment = new Map();
+const replEnv: Environment = new Map();
 
-repl_env.set("+", new MalFunction(
-  (args: MalType[]) => {
+replEnv.set("+", new MalFunction(
+  (args: MalType[]): MalInteger => {
     const x: MalInteger = args[0] as MalInteger;
     const y: MalInteger = args[1] as MalInteger;
     return new MalInteger(x.value + y.value);
-  }
+  },
 ));
 
-repl_env.set("-", new MalFunction(
-  (args: MalType[]) => {
+replEnv.set("-", new MalFunction(
+  (args: MalType[]): MalInteger => {
     const x: MalInteger = args[0] as MalInteger;
     const y: MalInteger = args[1] as MalInteger;
     return new MalInteger(x.value - y.value);
-  }
+  },
 ));
 
-repl_env.set("*", new MalFunction(
-  (args: MalType[]) => {
+replEnv.set("*", new MalFunction(
+  (args: MalType[]): MalInteger => {
     const x: MalInteger = args[0] as MalInteger;
     const y: MalInteger = args[1] as MalInteger;
     return new MalInteger(x.value * y.value);
-  }
+  },
 ));
 
-repl_env.set("/", new MalFunction(
-  (args: MalType[]) => {
+replEnv.set("/", new MalFunction(
+  (args: MalType[]): MalInteger => {
     const x: MalInteger = args[0] as MalInteger;
     const y: MalInteger = args[1] as MalInteger;
     return new MalInteger(Math.floor(x.value / y.value));
-  }
+  },
 ));
 
 function read(input: string): MalType {
@@ -75,7 +75,7 @@ function print(input: MalType): string {
 }
 
 function rep(input: string): string {
-  return print(eval_(read(input), repl_env));
+  return print(eval_(read(input), replEnv));
 }
 
 while (true) {

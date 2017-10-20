@@ -5,7 +5,7 @@ class Env {
 
   public constructor(private readonly outer?: Env) { }
 
-  public set(key: MalSymbol, value: MalType) {
+  public set(key: MalSymbol, value: MalType): void {
     this.data.set(key.name, value);
   }
 
@@ -19,7 +19,7 @@ class Env {
     return null;
   }
 
-  public get(key: MalSymbol) {
+  public get(key: MalSymbol): MalType {
     const env: Env | null = this.find(key);
     if (env) {
       return env.data.get(key.name) as MalType;
