@@ -25,4 +25,16 @@ class MalFunction extends MalType {
   }
 }
 
-export { MalFunction, MalInteger, MalList, MalSymbol, MalType };
+class MalBoolean extends MalType {
+  public constructor(public readonly value: boolean) {
+    super();
+  }
+}
+
+class MalNil extends MalType {
+  public constructor() {
+    super();
+  }
+}
+
+export { MalBoolean, MalFunction, MalInteger, MalList, MalNil, MalSymbol, MalType };

@@ -1,4 +1,4 @@
-import { MalInteger, MalList, MalSymbol, MalType } from "./types";
+import { MalBoolean, MalInteger, MalList, MalNil, MalSymbol, MalType } from "./types";
 
 class Reader {
   private index: number = 0;
@@ -66,7 +66,13 @@ function read_list(reader: Reader): MalList {
 
 function read_atom(reader: Reader): MalType {
   const token: string = reader.next();
-  if (token.match(/^-?\d+$/)) {
+  if (token === "true") {
+    return new MalBoolean(true);
+  } else if (token === "false") {
+    return new MalBoolean(false);
+  } else if (token === "nil") {
+    return new MalNil();
+  } else if (token.match(/^-?\d+$/)) {
     return new MalInteger(parseInt(token, 10));
   } else {
     return new MalSymbol(token);
