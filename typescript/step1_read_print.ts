@@ -12,7 +12,7 @@ function eval_(input: MalType): MalType {
 }
 
 function print(input: MalType): string {
-  return pr_str(input);
+  return pr_str(input, true);
 }
 
 function rep(input: string): string {

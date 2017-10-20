@@ -13,6 +13,12 @@ class MalSymbol extends MalType {
   }
 }
 
+class MalString extends MalType {
+  public constructor(public readonly value: string, public readonly token: string) {
+    super();
+  }
+}
+
 class MalList extends MalType {
   public constructor(public readonly items: MalType[]) {
     super();
@@ -37,4 +43,4 @@ class MalNil extends MalType {
   }
 }
 
-export { MalBoolean, MalFunction, MalInteger, MalList, MalNil, MalSymbol, MalType };
+export { MalBoolean, MalFunction, MalInteger, MalList, MalNil, MalString, MalSymbol, MalType };

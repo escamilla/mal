@@ -71,7 +71,7 @@ function eval_ast(ast: MalType, env: Environment): MalType {
 }
 
 function print(input: MalType): string {
-  return pr_str(input);
+  return pr_str(input, true);
 }
 
 function rep(input: string): string {

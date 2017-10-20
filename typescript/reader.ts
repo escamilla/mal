@@ -1,4 +1,4 @@
-import { MalBoolean, MalInteger, MalList, MalNil, MalSymbol, MalType } from "./types";
+import { MalBoolean, MalInteger, MalList, MalNil, MalString, MalSymbol, MalType } from "./types";
 
 class Reader {
   private index: number = 0;
@@ -44,6 +44,8 @@ function read_form(reader: Reader): MalType {
   const token: string = reader.peek();
   if (token === "(") {
     return read_list(reader);
+  } else if (token.startsWith('"')) {
+    return read_string(reader);
   } else {
     return read_atom(reader);
   }
@@ -62,6 +64,15 @@ function read_list(reader: Reader): MalList {
   }
   reader.next(); // skip right parenthesis
   return new MalList(items);
+}
+
+function read_string(reader: Reader): MalString {
+  const token: string = reader.next();
+  let value: string = token.slice(1, token.length - 1);
+  value = value.replace(/\\"/g, '"');
+  value = value.replace(/\\n/g, "\n");
+  value = value.replace(/\\\\/g, "\\");
+  return new MalString(value, token);
 }
 
 function read_atom(reader: Reader): MalType {
