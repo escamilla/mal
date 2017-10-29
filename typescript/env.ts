@@ -3,7 +3,14 @@ import { MalSymbol, MalType } from "./types";
 class Env {
   private data: Map<string, MalType> = new Map();
 
-  public constructor(private readonly outer?: Env) { }
+  public constructor(private readonly outer?: Env, binds: MalSymbol[] = [], exprs: MalType[] = []) {
+    if (binds.length !== exprs.length) {
+      throw new Error("Lengths of binds and exprs lists must be equal");
+    }
+    for (let i: number = 0; i < binds.length; i++) {
+      this.set(binds[i], exprs[i]);
+    }
+  }
 
   public set(key: MalSymbol, value: MalType): void {
     this.data.set(key.name, value);

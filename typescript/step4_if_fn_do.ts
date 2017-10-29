@@ -56,7 +56,19 @@ function eval_(input: MalType, env: Env): MalType {
         return eval_(input.items[2], env);
       }
     } else if (head.name === "fn*") {
-      // TODO: implement user-defined functions
+      return ((): MalType => {
+        const binds: MalList = input.items[1] as MalList;
+        const functionParams: MalSymbol[] = binds.items.map((item: MalType) => {
+          if (item.type !== NodeType.Symbol) {
+            throw new Error("expected list of symbols for function parameters");
+          }
+          return item as MalSymbol;
+        });
+        const functionBody: MalType = input.items[2];
+        return new MalFunction((functionArgs: MalType[]): MalType => {
+          return eval_(functionBody, new Env(env, functionParams, functionArgs));
+        });
+      })();
     }
   }
   const evaluatedList: MalList = eval_ast(input, env) as MalList;
