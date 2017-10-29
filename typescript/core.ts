@@ -1,4 +1,4 @@
-import { pr_str } from "./printer";
+import { prStr } from "./printer";
 import { MalBoolean, malEqual, MalFunction, MalInteger, MalList, MalNil, MalType } from "./types";
 
 export const ns: Map<string, MalFunction> = new Map();
@@ -37,7 +37,7 @@ ns.set("/", new MalFunction(
 
 ns.set("prn", new MalFunction(
   (args: MalType[]): MalNil => {
-    console.log(pr_str(args[0], true));
+    console.log(prStr(args[0], true));
     return new MalNil();
   },
 ));

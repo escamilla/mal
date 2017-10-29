@@ -1,4 +1,4 @@
-import { MalBoolean, MalInteger, MalList, MalNil, MalString, MalSymbol, MalType } from "./types";
+import { MalBoolean, MalInteger, MalList, MalNil, MalString, MalSymbol, MalType, MalVector } from "./types";
 
 class Reader {
   private index: number = 0;
@@ -34,39 +34,49 @@ function tokenizer(input: string): string[] {
   return tokens;
 }
 
-function read_str(input: string): MalType {
+export function readStr(input: string): MalType {
   const tokens: string[] = tokenizer(input);
   const reader: Reader = new Reader(tokens);
-  return read_form(reader);
+  return readForm(reader);
 }
 
-function read_form(reader: Reader): MalType {
+function readForm(reader: Reader): MalType {
   const token: string = reader.peek();
   if (token === "(") {
-    return read_list(reader);
+    return readList(reader);
+  } else if (token === "[") {
+    return readVector(reader);
   } else if (token.startsWith('"')) {
-    return read_string(reader);
+    return readString(reader);
   } else {
-    return read_atom(reader);
+    return readAtom(reader);
   }
 }
 
-function read_list(reader: Reader): MalList {
+function readSequence(reader: Reader, startToken: string, endToken: string): MalType[] {
   let token: string;
   const items: MalType[] = [];
-  reader.next(); // skip left parenthesis
+  reader.next(); // skip start token
   while (true) {
     token = reader.peek();
-    if (token === ")") {
+    if (token === endToken) {
       break;
     }
-    items.push(read_form(reader));
+    items.push(readForm(reader));
   }
-  reader.next(); // skip right parenthesis
-  return new MalList(items);
+  reader.next(); // skip end token
+  return items;
 }
 
-function read_string(reader: Reader): MalString {
+function readList(reader: Reader): MalList {
+  return new MalList(readSequence(reader, "(", ")"));
+}
+
+function readVector(reader: Reader): MalVector {
+  return new MalVector(readSequence(reader, "[", "]"));
+}
+
+function readString(reader: Reader): MalString {
   const token: string = reader.next();
   let value: string = token.slice(1, token.length - 1);
   value = value.replace(/\\"/g, '"');
@@ -75,7 +85,7 @@ function read_string(reader: Reader): MalString {
   return new MalString(value, token);
 }
 
-function read_atom(reader: Reader): MalType {
+function readAtom(reader: Reader): MalType {
   const token: string = reader.next();
   if (token === "true") {
     return new MalBoolean(true);
@@ -89,5 +99,3 @@ function read_atom(reader: Reader): MalType {
     return new MalSymbol(token);
   }
 }
-
-export { read_str };

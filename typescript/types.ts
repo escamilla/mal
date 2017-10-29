@@ -1,4 +1,4 @@
-enum NodeType {
+export enum NodeType {
   Boolean,
   Function,
   Integer,
@@ -6,57 +6,65 @@ enum NodeType {
   Nil,
   String,
   Symbol,
+  Vector,
 }
 
-class MalBoolean {
+export class MalBoolean {
   public readonly type: NodeType = NodeType.Boolean;
 
   public constructor(public readonly value: boolean) {
   }
 }
 
-class MalFunction {
+export class MalFunction {
   public readonly type: NodeType = NodeType.Function;
 
   public constructor(public readonly func: (args: MalType[]) => MalType) {
   }
 }
 
-class MalInteger {
+export class MalInteger {
   public readonly type: NodeType = NodeType.Integer;
 
   public constructor(public readonly value: number) {
   }
 }
 
-class MalList {
+export class MalList {
   public readonly type: NodeType = NodeType.List;
 
   public constructor(public readonly items: MalType[]) {
   }
 }
 
-class MalNil {
+export class MalNil {
   public readonly type: NodeType = NodeType.Nil;
 }
 
-class MalString {
+export class MalString {
   public readonly type: NodeType = NodeType.String;
 
   public constructor(public readonly value: string, public readonly token: string) {
   }
 }
 
-class MalSymbol {
+export class MalSymbol {
   public readonly type: NodeType = NodeType.Symbol;
 
   public constructor(public readonly name: string) {
   }
 }
 
-type MalType = MalBoolean | MalFunction | MalInteger | MalList | MalNil | MalString | MalSymbol;
+export class MalVector {
+  public readonly type: NodeType = NodeType.Vector;
 
-function malEqual(x: MalType, y: MalType): boolean {
+  public constructor(public readonly items: MalType[] = []) {
+  }
+}
+
+export type MalType = MalBoolean | MalFunction | MalInteger | MalList | MalNil | MalString | MalSymbol | MalVector;
+
+export function malEqual(x: MalType, y: MalType): boolean {
   if (x.type !== y.type) {
     return false;
   }
@@ -87,9 +95,19 @@ function malEqual(x: MalType, y: MalType): boolean {
       return (x as MalString).value === (y as MalString).value;
     case NodeType.Symbol:
       return (x as MalSymbol).name === (y as MalSymbol).name;
+    case NodeType.Vector:
+      const xVector: MalVector = x as MalVector;
+      const yVector: MalVector = y as MalVector;
+      if (xVector.items.length !== yVector.items.length) {
+        return false;
+      }
+      for (let i: number = 0; i < xVector.items.length; i++) {
+        if (!malEqual(xVector.items[i], yVector.items[i])) {
+          return false;
+        }
+      }
+      return true;
   }
 
   return false;
 }
-
-export { NodeType, MalBoolean, MalFunction, MalInteger, MalList, MalNil, MalString, MalSymbol, MalType, malEqual };

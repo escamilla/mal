@@ -1,9 +1,9 @@
 import * as readline from "readline-sync";
 import { ns } from "./core";
 import { Env } from "./env";
-import { pr_str } from "./printer";
-import { read_str } from "./reader";
-import { MalBoolean, MalFunction, MalList, MalNil, MalSymbol, MalType, NodeType } from "./types";
+import { prStr } from "./printer";
+import { readStr } from "./reader";
+import { MalBoolean, MalFunction, MalList, MalNil, MalSymbol, MalType, MalVector, NodeType } from "./types";
 
 const replEnv: Env = new Env();
 
@@ -12,12 +12,12 @@ ns.forEach((value: MalFunction, key: string) => {
 });
 
 function read(input: string): MalType {
-  return read_str(input);
+  return readStr(input);
 }
 
 function eval_(input: MalType, env: Env): MalType {
   if (!(input instanceof MalList)) {
-    return eval_ast(input, env);
+    return evalAst(input, env);
   }
 
   if (input.items.length === 0) {
@@ -71,23 +71,25 @@ function eval_(input: MalType, env: Env): MalType {
       })();
     }
   }
-  const evaluatedList: MalList = eval_ast(input, env) as MalList;
+  const evaluatedList: MalList = evalAst(input, env) as MalList;
   const fn: MalFunction = evaluatedList.items[0] as MalFunction;
   const args: MalType[] = evaluatedList.items.slice(1);
   return fn.func(args);
 }
 
-function eval_ast(ast: MalType, env: Env): MalType {
+function evalAst(ast: MalType, env: Env): MalType {
   if (ast instanceof MalSymbol) {
     return env.get(ast);
   } else if (ast instanceof MalList) {
     return new MalList(ast.items.map((item: MalType) => eval_(item, env)));
+  } else if (ast instanceof MalVector) {
+    return new MalVector(ast.items.map((item: MalType) => eval_(item, env)));
   }
   return ast;
 }
 
 function print(input: MalType): string {
-  return pr_str(input, true);
+  return prStr(input, true);
 }
 
 function rep(input: string): string {

@@ -1,10 +1,10 @@
 import * as readline from "readline-sync";
-import { pr_str } from "./printer";
-import { read_str } from "./reader";
+import { prStr } from "./printer";
+import { readStr } from "./reader";
 import { MalType } from "./types";
 
 function read(input: string): MalType {
-  return read_str(input);
+  return readStr(input);
 }
 
 function eval_(input: MalType): MalType {
@@ -12,7 +12,7 @@ function eval_(input: MalType): MalType {
 }
 
 function print(input: MalType): string {
-  return pr_str(input, true);
+  return prStr(input, true);
 }
 
 function rep(input: string): string {
