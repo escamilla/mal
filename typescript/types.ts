@@ -1,7 +1,9 @@
 export enum NodeType {
   Boolean,
   Function,
+  HashMap,
   Integer,
+  Keyword,
   List,
   Nil,
   String,
@@ -23,10 +25,24 @@ export class MalFunction {
   }
 }
 
+export class MalHashMap {
+  public readonly type: NodeType = NodeType.HashMap;
+
+  public constructor(public readonly entries: Array<[MalType, MalType]>) {
+  }
+}
+
 export class MalInteger {
   public readonly type: NodeType = NodeType.Integer;
 
   public constructor(public readonly value: number) {
+  }
+}
+
+export class MalKeyword {
+  public readonly type: NodeType = NodeType.Keyword;
+
+  public constructor(public readonly value: string) {
   }
 }
 
@@ -62,7 +78,8 @@ export class MalVector {
   }
 }
 
-export type MalType = MalBoolean | MalFunction | MalInteger | MalList | MalNil | MalString | MalSymbol | MalVector;
+export type MalType = MalBoolean | MalFunction | MalHashMap | MalInteger | MalKeyword |
+                      MalList | MalNil | MalString | MalSymbol | MalVector;
 
 export function malEqual(x: MalType, y: MalType): boolean {
   if (x.type !== y.type) {
@@ -77,6 +94,8 @@ export function malEqual(x: MalType, y: MalType): boolean {
       return false;
     case NodeType.Integer:
       return (x as MalInteger).value === (y as MalInteger).value;
+    case NodeType.Keyword:
+      return (x as MalKeyword).value === (y as MalKeyword).value;
     case NodeType.List:
       const xList: MalList = x as MalList;
       const yList: MalList = y as MalList;

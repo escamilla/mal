@@ -2,7 +2,7 @@ import * as readline from "readline-sync";
 import { Env } from "./env";
 import { prStr } from "./printer";
 import { readStr } from "./reader";
-import { MalFunction, MalInteger, MalList, MalSymbol, MalType, MalVector} from "./types";
+import { MalFunction, MalHashMap, MalInteger, MalList, MalSymbol, MalType, MalVector} from "./types";
 
 const replEnv: Env = new Env();
 
@@ -82,6 +82,12 @@ function evalAst(ast: MalType, env: Env): MalType {
     return new MalList(ast.items.map((item: MalType) => eval_(item, env)));
   } else if (ast instanceof MalVector) {
     return new MalVector(ast.items.map((item: MalType) => eval_(item, env)));
+  } else if (ast instanceof MalHashMap) {
+    const evaluatedEntries: Array<[MalType, MalType]> = ast.entries.map((entry: [MalType, MalType]) => {
+      const [key, value]: [MalType, MalType] = entry;
+      return [eval_(key, env), eval_(value, env)] as [MalType, MalType];
+    });
+    return new MalHashMap(evaluatedEntries);
   }
   return ast;
 }

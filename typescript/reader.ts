@@ -1,4 +1,6 @@
-import { MalBoolean, MalInteger, MalList, MalNil, MalString, MalSymbol, MalType, MalVector } from "./types";
+import {
+  MalBoolean, MalHashMap, MalInteger, MalKeyword, MalList, MalNil, MalString, MalSymbol, MalType, MalVector,
+} from "./types";
 
 class Reader {
   private index: number = 0;
@@ -46,6 +48,8 @@ function readForm(reader: Reader): MalType {
     return readList(reader);
   } else if (token === "[") {
     return readVector(reader);
+  } else if (token === "{") {
+    return readHashMap(reader);
   } else if (token.startsWith('"')) {
     return readString(reader);
   } else {
@@ -76,6 +80,15 @@ function readVector(reader: Reader): MalVector {
   return new MalVector(readSequence(reader, "[", "]"));
 }
 
+function readHashMap(reader: Reader): MalHashMap {
+  const items: MalType[] = readSequence(reader, "{", "}");
+  const entries: Array<[MalType, MalType]> = [];
+  for (let i: number = 0; i < items.length; i += 2) {
+    entries.push([items[i], items[i + 1]]);
+  }
+  return new MalHashMap(entries);
+}
+
 function readString(reader: Reader): MalString {
   const token: string = reader.next();
   let value: string = token.slice(1, token.length - 1);
@@ -93,6 +106,8 @@ function readAtom(reader: Reader): MalType {
     return new MalBoolean(false);
   } else if (token === "nil") {
     return new MalNil();
+  } else if (token.startsWith(":")) {
+    return new MalKeyword(token);
   } else if (token.match(/^-?\d+$/)) {
     return new MalInteger(parseInt(token, 10));
   } else {

@@ -1,4 +1,6 @@
-import { MalBoolean, MalInteger, MalList, MalString, MalSymbol, MalType, MalVector, NodeType } from "./types";
+import {
+  MalBoolean, MalHashMap, MalInteger, MalKeyword, MalList, MalString, MalSymbol, MalType, MalVector, NodeType,
+} from "./types";
 
 export function prStr(input: MalType, printReadably: boolean): string {
   switch (input.type) {
@@ -6,8 +8,17 @@ export function prStr(input: MalType, printReadably: boolean): string {
       return (input as MalBoolean).value ? "true" : "false";
     case NodeType.Function:
       return "#<function>";
+    case NodeType.HashMap:
+      const hashMap: MalHashMap = input as MalHashMap;
+      const entryStrings: string[] = hashMap.entries.map((entry: [MalType, MalType]) => {
+        const [key, value]: [MalType, MalType] = entry;
+        return `${prStr(key, printReadably)} ${prStr(value, printReadably)}`;
+      });
+      return `{${entryStrings.join(" ")}}`;
     case NodeType.Integer:
       return `${(input as MalInteger).value}`;
+    case NodeType.Keyword:
+      return (input as MalKeyword).value;
     case NodeType.List:
       const list: MalList = input as MalList;
       return `(${list.items.map((item: MalType) => prStr(item, printReadably)).join(" ")})`;
