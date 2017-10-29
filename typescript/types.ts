@@ -81,7 +81,25 @@ export class MalVector {
 export type MalType = MalBoolean | MalFunction | MalHashMap | MalInteger | MalKeyword |
                       MalList | MalNil | MalString | MalSymbol | MalVector;
 
+function isSequence(ast: MalType): boolean {
+  return (ast.type === NodeType.List) || (ast.type === NodeType.Vector);
+}
+
 export function malEqual(x: MalType, y: MalType): boolean {
+  if (isSequence(x) && isSequence(y)) {
+    const xList: MalList = x as MalList;
+    const yList: MalList = y as MalList;
+    if (xList.items.length !== yList.items.length) {
+      return false;
+    }
+    for (let i: number = 0; i < xList.items.length; i++) {
+      if (!malEqual(xList.items[i], yList.items[i])) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   if (x.type !== y.type) {
     return false;
   }
@@ -96,36 +114,12 @@ export function malEqual(x: MalType, y: MalType): boolean {
       return (x as MalInteger).value === (y as MalInteger).value;
     case NodeType.Keyword:
       return (x as MalKeyword).value === (y as MalKeyword).value;
-    case NodeType.List:
-      const xList: MalList = x as MalList;
-      const yList: MalList = y as MalList;
-      if (xList.items.length !== yList.items.length) {
-        return false;
-      }
-      for (let i: number = 0; i < xList.items.length; i++) {
-        if (!malEqual(xList.items[i], yList.items[i])) {
-          return false;
-        }
-      }
-      return true;
     case NodeType.Nil:
       return true;
     case NodeType.String:
       return (x as MalString).value === (y as MalString).value;
     case NodeType.Symbol:
       return (x as MalSymbol).name === (y as MalSymbol).name;
-    case NodeType.Vector:
-      const xVector: MalVector = x as MalVector;
-      const yVector: MalVector = y as MalVector;
-      if (xVector.items.length !== yVector.items.length) {
-        return false;
-      }
-      for (let i: number = 0; i < xVector.items.length; i++) {
-        if (!malEqual(xVector.items[i], yVector.items[i])) {
-          return false;
-        }
-      }
-      return true;
   }
 
   return false;
