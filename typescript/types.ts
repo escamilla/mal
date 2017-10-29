@@ -1,3 +1,5 @@
+import { Env } from "./env";
+
 export enum NodeType {
   Boolean,
   Function,
@@ -21,7 +23,14 @@ export class MalBoolean {
 export class MalFunction {
   public readonly type: NodeType = NodeType.Function;
 
-  public constructor(public readonly func: (args: MalType[]) => MalType) {
+  public userDefined: boolean = false;
+  public func: (args: MalType[]) => MalType;
+  public env: Env;
+  public body: MalType;
+  public params: MalSymbol[];
+
+  public constructor(func: (args: MalType[]) => MalType) {
+    this.func = func;
   }
 }
 
