@@ -60,7 +60,7 @@ export class MalNil {
 export class MalString {
   public readonly type: NodeType = NodeType.String;
 
-  public constructor(public readonly value: string, public readonly token: string) {
+  public constructor(public readonly value: string) {
   }
 }
 

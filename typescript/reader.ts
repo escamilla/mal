@@ -93,9 +93,8 @@ function readString(reader: Reader): MalString {
   const token: string = reader.next();
   let value: string = token.slice(1, token.length - 1);
   value = value.replace(/\\"/g, '"');
-  value = value.replace(/\\n/g, "\n");
-  value = value.replace(/\\\\/g, "\\");
-  return new MalString(value, token);
+  value = value.replace(/\\(.)/g, (match: string, char: string) => (char === "n") ? "\n" : char);
+  return new MalString(value);
 }
 
 function readAtom(reader: Reader): MalType {

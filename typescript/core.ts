@@ -1,5 +1,5 @@
 import { prStr } from "./printer";
-import { MalBoolean, malEqual, MalFunction, MalInteger, MalList, MalNil, MalType } from "./types";
+import { MalBoolean, malEqual, MalFunction, MalInteger, MalList, MalNil, MalString, MalType } from "./types";
 
 export const ns: Map<string, MalFunction> = new Map();
 
@@ -32,13 +32,6 @@ ns.set("/", new MalFunction(
     const x: MalInteger = args[0] as MalInteger;
     const y: MalInteger = args[1] as MalInteger;
     return new MalInteger(Math.floor(x.value / y.value));
-  },
-));
-
-ns.set("prn", new MalFunction(
-  (args: MalType[]): MalNil => {
-    console.log(prStr(args[0], true));
-    return new MalNil();
   },
 ));
 
@@ -105,5 +98,35 @@ ns.set(">=", new MalFunction(
     const x: MalInteger = args[0] as MalInteger;
     const y: MalInteger = args[1] as MalInteger;
     return new MalBoolean(x.value >= y.value);
+  },
+));
+
+ns.set("pr-str", new MalFunction(
+  (args: MalType[]): MalString => {
+    const value: string = args.map((arg: MalType) => prStr(arg, true)).join(" ");
+    return new MalString(value);
+  },
+));
+
+ns.set("str", new MalFunction(
+  (args: MalType[]): MalString => {
+    const value: string = args.map((arg: MalType) => prStr(arg, false)).join("");
+    return new MalString(value);
+  },
+));
+
+ns.set("prn", new MalFunction(
+  (args: MalType[]): MalNil => {
+    const value: string = args.map((arg: MalType) => prStr(arg, true)).join(" ");
+    console.log(value);
+    return new MalNil();
+  },
+));
+
+ns.set("println", new MalFunction(
+  (args: MalType[]): MalNil => {
+    const value: string = args.map((arg: MalType) => prStr(arg, false)).join(" ");
+    console.log(value);
+    return new MalNil();
   },
 ));

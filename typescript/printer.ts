@@ -25,10 +25,15 @@ export function prStr(input: MalType, printReadably: boolean): string {
     case NodeType.Nil:
       return "nil";
     case NodeType.String:
+      const value: string = (input as MalString).value;
       if (printReadably) {
-        return (input as MalString).token;
+        const escaped: string = value
+          .replace(/\\/g, "\\\\")
+          .replace(/"/g, '\\"')
+          .replace(/\n/g, "\\n");
+        return `"${escaped}"`;
       } else {
-        return `"${(input as MalString).value}"`;
+        return value;
       }
     case NodeType.Symbol:
       return (input as MalSymbol).name;

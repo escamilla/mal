@@ -102,6 +102,8 @@ function rep(input: string): string {
   return print(eval_(read(input), replEnv));
 }
 
+rep("(def! not (fn* (a) (if a false true)))");
+
 while (true) {
   const line: string = readline.question("user> ");
   if (line === "") {
